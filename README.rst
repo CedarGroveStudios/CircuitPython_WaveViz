@@ -18,7 +18,9 @@ Introduction
     :target: https://github.com/psf/black
     :alt: Code Style: Black
 
-A CircuitPython class to create a bitmap graphic from a synthio waveform wave_table.
+A CircuitPython class to create a positionable ``displayio.Group`` object
+widget from a ``synthio.ReadableBuffer`` wave table. The class also makes
+the underlying bitmap object available.
 
 
 Dependencies
@@ -35,33 +37,8 @@ or individual libraries can be installed using
 
 Installing from PyPI
 =====================
-.. note:: This library is not available on PyPI yet. Install documentation is included
-   as a standard element. Stay tuned for PyPI availability!
+.. note:: This library is not available on PyPI.
 
-.. todo:: Remove the above note if PyPI version is/will be available at time of release.
-
-On supported GNU/Linux systems like the Raspberry Pi, you can install the driver locally `from
-PyPI <https://pypi.org/project/Cedargrove-circuitpython-waveviz/>`_.
-To install for current user:
-
-.. code-block:: shell
-
-    pip3 install Cedargrove-circuitpython-waveviz
-
-To install system-wide (this may be required in some cases):
-
-.. code-block:: shell
-
-    sudo pip3 install Cedargrove-circuitpython-waveviz
-
-To install in a virtual environment in your current project:
-
-.. code-block:: shell
-
-    mkdir project-name && cd project-name
-    python3 -m venv .venv
-    source .env/bin/activate
-    pip3 install Cedargrove-circuitpython-waveviz
 
 Installing to a Connected CircuitPython Device with Circup
 ==========================================================
