@@ -73,7 +73,7 @@ Usage Example
     # Define size and offset for display plot window
     PLOT_SIZE = (300, 240)  # The plot window (width, height) in pixels
     PLOT_OFFSET = (0, 0)  # Left x-axis origin point (x, y)
-    
+
     # Define synth parameters
     WAVE_TABLE_LENGTH = 512  # The wave table length in samples
     SAMPLE_MAXIMUM = 32700  # The maximum value of a sample
@@ -136,6 +136,6 @@ API documentation for this library can be found in `Cedargrove_WaveViz <https://
 For additional detail about ``WaveViz``, see `WaveViz: Plot a synthio Waveform <https://adafruit-playground.com/u/CGrover/pages/waveviz-plot-a-synthio-waveform>`_
 
 Planned Updates
----------------
+===============
 * Use a .wav file as input.
 * Design a scrolling window for visualizing long waveform arrays and files.
