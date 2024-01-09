@@ -11,7 +11,7 @@ from cedargrove_waveviz import WaveViz
 PLOT_SIZE = (300, 240)  # The plot window (width, height) in pixels
 PLOT_OFFSET = (0, 0)  # Left x-axis origin point (x, y)
 
-# Define synth parameters
+# Define wave table parameters
 WAVE_TABLE_LENGTH = 512  # The wave table length in samples
 SAMPLE_MAXIMUM = 32700  # The maximum value of a sample
 
