@@ -131,8 +131,6 @@ API documentation for this library can be found in `Cedargrove_WaveViz <https://
 
 .. image:: https://github.com/CedarGroveStudios/CircuitPython_WaveViz/blob/main/media/waveviz_api_page1a.png
 
-.. image:: https://github.com/CedarGroveStudios/CircuitPython_WaveViz/blob/main/media/waveviz_api_page2a.png
-
 For additional detail about ``WaveViz``, see `WaveViz: Plot a synthio Wave Table <https://adafruit-playground.com/u/CGrover/pages/waveviz-plot-a-synthio-wave-table>`_
 
 Planned Updates
