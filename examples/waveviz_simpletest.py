@@ -3,9 +3,9 @@
 
 import board
 import displayio
+import adafruit_ili9341
 from cedargrove_wavebuilder import WaveBuilder, WaveShape
 from cedargrove_waveviz import WaveViz
-import adafruit_ili9341
 
 # Define size and offset for display plot window
 PLOT_SIZE = (300, 240)  # The plot window (width, height) in pixels
