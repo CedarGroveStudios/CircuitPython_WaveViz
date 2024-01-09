@@ -1,8 +1,8 @@
 Introduction
 ============
 
-
-
+.. image:: https://github.com/CedarGroveStudios/CircuitPython_WaveViz/blob/main/media/harmonica_wave_TFT.jpeg
+    :width: 400
 
 .. image:: https://img.shields.io/discord/327254708534116352.svg
     :target: https://adafru.it/discord
