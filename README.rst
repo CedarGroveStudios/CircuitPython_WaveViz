@@ -18,7 +18,7 @@ Introduction
     :target: https://github.com/psf/black
     :alt: Code Style: Black
 
-A CircuitPython class to create a positionable ``displayio.Group`` graphic
+A CircuitPython class to create a positionable ``displayio.Group`` graphics
 widget from a ``synthio.ReadableBuffer`` wave table. The class also makes
 the underlying bitmap object available.
 
