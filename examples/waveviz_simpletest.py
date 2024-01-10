@@ -36,8 +36,6 @@ tone = [
     (WaveShape.Sine, 3.00, 0.28),
     (WaveShape.Sine, 4.00, 0.02),
     (WaveShape.Sine, 5.00, 0.12),
-    (WaveShape.Sine, 6.00, 0.00),
-    (WaveShape.Sine, 7.00, 0.00),
 ]
 
 # Create the wave table (wave.wave_table)
