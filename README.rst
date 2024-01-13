@@ -62,6 +62,9 @@ Or the following command to update an existing version:
 Usage Example
 =============
 
+.. image:: https://github.com/CedarGroveStudios/CircuitPython_WaveViz/blob/main/media/waveviz_simpletest.png
+    :width: 400
+
 .. code-block:: python
 
     import board
