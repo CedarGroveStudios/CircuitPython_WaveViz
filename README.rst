@@ -19,7 +19,7 @@ Introduction
     :alt: Code Style: Black
 
 A CircuitPython class to create a positionable ``displayio.Group`` graphics
-widget from a ``synthio.ReadableBuffer`` wave table. The class also makes
+widget from a ``synthio.ReadableBuffer`` wave table or one-dimensional list. The class also makes
 the underlying bitmap object available.
 
 
