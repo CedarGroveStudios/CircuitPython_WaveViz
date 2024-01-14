@@ -79,8 +79,13 @@ class WaveViz(displayio.Group):
 
     @property
     def bitmap(self):
-        """The resultant bitmap."""
+        """The resultant bitmap object."""
         return self._bmp
+
+    @property
+    def palette(self):
+        """The resultant displayio.Palette object."""
+        return self._palette
 
     def _plot_wave(self):
         """Plot the wave_table as a bitmap."""
