@@ -88,16 +88,26 @@ class WaveViz(displayio.Group):
         return self._palette
 
     def _plot_wave(self):
-        """Plot the wave_table as a bitmap."""
-        samples = len(self._wave_table)
-        max_value = max(abs(min(self._wave_table)), abs(max(self._wave_table)))
-        scale_y = self._size[1] / max_value / 2
+        """Plot the wave_table as a bitmap. Extract samples from the wave
+        table to fill the bitmap object's x-axis. Y-axis scale factor is
+        determined from the extracted sample values."""
+        samples = len(self._wave_table)  # Samples in wave table
+
+        # Detect maximum value of extracted values and calculate scale factor
+        max_sample_value = 0
+        for x in range(self._size[0]):
+            table_idx = int(x * (samples / self._size[0]))
+            max_sample_value = max(
+                abs(min(max_sample_value, self._wave_table[table_idx])),
+                abs(max(max_sample_value, self._wave_table[table_idx])),
+            )
+        scale_y = self._size[1] / max_sample_value / 2
 
         self._prev_point = (0, 0)  # (display x index, wave_table index)
 
-        for x in range(0, self._size[0], 2):
-            table_index = int(x * (samples / self._size[0]))
-            self._next_point = (x, table_index)
+        for x in range(0, self._size[0]):
+            table_idx = int(x * (samples / self._size[0]))
+            self._next_point = (x, table_idx)
 
             bitmaptools.draw_line(
                 self._bmp,
