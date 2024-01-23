@@ -19,6 +19,7 @@ Implementation Notes
   https://circuitpython.org/downloads
 """
 
+from array import array
 import displayio
 import bitmaptools
 
@@ -56,6 +57,7 @@ class WaveViz(displayio.Group):
         self._origin = origin
         self._size = size
         self._scale = scale
+        self._y_offset = self._size[1] // 2
 
         self._palette = displayio.Palette(3)
         self._palette[1] = plot_color
@@ -93,85 +95,47 @@ class WaveViz(displayio.Group):
         determined from the extracted sample values."""
         samples = len(self._wave_table)  # Samples in wave table
 
-        # Detect maximum value of extracted values and calculate scale factor
-        max_sample_value = 0
+        # Create and fill the polygon arrays
+        x_points = array("h", [])
+        y_points = array("h", [])
         for x in range(self._size[0]):
+            x_points.append(x)
             table_idx = int(x * (samples / self._size[0]))
-            max_sample_value = max(
-                abs(min(max_sample_value, self._wave_table[table_idx])),
-                abs(max(max_sample_value, self._wave_table[table_idx])),
-            )
+            y_points.append(self._wave_table[table_idx])
+        # Update the final point
+        y_points[-1] = self._wave_table[-1]
+
+        # Calculate the y-axis scale factor and adjust y values
+        max_sample_value = max(y_points)
         scale_y = self._size[1] / max_sample_value / 2
+        for y in range(self._size[0]):
+            y_points[y] = self._y_offset + int(y_points[y] * scale_y)
 
-        self._prev_point = (0, 0)  # (display x index, wave_table index)
-
-        for x in range(0, self._size[0]):
-            table_idx = int(x * (samples / self._size[0]))
-            self._next_point = (x, table_idx)
-
-            bitmaptools.draw_line(
-                self._bmp,
-                self._prev_point[0],
-                (self._size[1] // 2)
-                + (-int(self._wave_table[self._prev_point[1]] * scale_y)),
-                self._next_point[0],
-                (self._size[1] // 2)
-                + (-int(self._wave_table[self._next_point[1]] * scale_y)),
-                1,
-            )
-
-            self._prev_point = self._next_point
-
-        # Always plot the final point
-        bitmaptools.draw_line(
+        # Draw the values as an open polygon
+        bitmaptools.draw_polygon(
             self._bmp,
-            self._prev_point[0],
-            (self._size[1] // 2)
-            + (-int(self._wave_table[self._prev_point[1]] * scale_y)),
-            self._next_point[0],
-            (self._size[1] // 2) + (-int(self._wave_table[-1] * scale_y)),
+            x_points,
+            y_points,
             1,
+            False,
         )
 
     def _plot_grid(self):
-        """Plot the grid lines as a bitmap."""
-        bitmaptools.draw_line(
+        """Plot the grid lines."""
+        # Draw the outer box
+        bitmaptools.draw_polygon(
             self._bmp,
-            0,
-            0,
-            self._size[0] - 1,
-            0,
+            array("h", [0, self._size[0] - 1, self._size[0] - 1, 0]),
+            array("h", [0, 0, self._size[1] - 1, self._size[1] - 1]),
             2,
         )
-        bitmaptools.draw_line(
-            self._bmp,
-            self._size[0] - 1,
-            0,
-            self._size[0] - 1,
-            self._size[1] - 1,
-            2,
-        )
-        bitmaptools.draw_line(
-            self._bmp,
-            self._size[0] - 1,
-            self._size[1] - 1,
-            0,
-            self._size[1] - 1,
-            2,
-        )
+
+        # Draw x-axis line
         bitmaptools.draw_line(
             self._bmp,
             0,
-            self._size[1] - 1,
-            0,
-            0,
-            2,
-        )
-        bitmaptools.draw_line(
-            self._bmp,
-            0,
-            self._size[1] // 2,
+            self._y_offset,
             self._size[0],
-            self._size[1] // 2,
+            self._y_offset,
             2,
         )
