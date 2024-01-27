@@ -18,9 +18,10 @@ Introduction
     :target: https://github.com/psf/black
     :alt: Code Style: Black
 
-A CircuitPython class to create a positionable ``displayio.Group`` graphics
-widget from a ``synthio.ReadableBuffer`` wave table or one-dimensional list. The class also makes
-the underlying bitmap object available.
+A CircuitPython class to create a positionable ``displayio.TileGrid`` object
+from a ``synthio.ReadableBuffer`` wave table. The class inherits all
+properties of a ``TileGrid`` object including ``bitmap``, ``pixel_shader``, ``width``,
+``height``, ``x``, ``y``.
 
 
 Dependencies
@@ -69,13 +70,9 @@ Usage Example
 
     import board
     import displayio
+    import adafruit_ili9341
     from cedargrove_wavebuilder import WaveBuilder, WaveShape
     from cedargrove_waveviz import WaveViz
-    import adafruit_ili9341
-
-    # Define size and offset for display plot window
-    PLOT_SIZE = (300, 240)  # The plot window (width, height) in pixels
-    PLOT_OFFSET = (0, 0)  # Left x-axis origin point (x, y)
 
     # Define wave table parameters
     WAVE_TABLE_LENGTH = 512  # The wave table length in samples
@@ -102,8 +99,6 @@ Usage Example
         (WaveShape.Sine, 3.00, 0.28),
         (WaveShape.Sine, 4.00, 0.02),
         (WaveShape.Sine, 5.00, 0.12),
-        (WaveShape.Sine, 6.00, 0.00),
-        (WaveShape.Sine, 7.00, 0.00),
     ]
 
     # Create the wave table (wave.wave_table)
@@ -117,15 +112,18 @@ Usage Example
     )
 
     # Display a small version on the bottom layer
-    splash.append(WaveViz(wave.wave_table, (20, 80), (25, 25), back_color=0x0000A0))
+    splash.append(
+        WaveViz(wave.wave_table, x=20, y=80, width=25, height=25, back_color=0x0000A0)
+    )
 
     # Display a full-sized version on the top layer
     splash.append(
-        WaveViz(wave.wave_table, PLOT_OFFSET, PLOT_SIZE, back_color=None, scale=1)
+        WaveViz(wave.wave_table, x=0, y=0, width=300, height=240, back_color=None)
     )
 
     while True:
         pass
+
 
 
 Documentation
