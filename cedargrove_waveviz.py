@@ -7,7 +7,7 @@
 A CircuitPython class to create a positionable ``displayio.TileGrid`` object
 from a ``synthio.ReadableBuffer`` wave table. The class inherits all
 properties of a ``TileGrid`` object including bitmap, pixel_shader, width,
-height, tile_width, tile_height, x, y.
+height, x, y.
 
 https://github.com/CedarGroveStudios/CircuitPython_WaveViz
 https://docs.circuitpython.org/en/latest/shared-bindings/displayio/#displayio.TileGrid
@@ -32,7 +32,7 @@ class WaveViz(displayio.TileGrid):
     The WaveViz class creates a positionable ``displayio.TileGrid`` object
     from a ``synthio.ReadableBuffer`` wave table. The class inherits all
     properties of a ``TileGrid`` object including bitmap, pixel_shader, width,
-    height, tile_width, tile_height, x, y.
+    height, x, y.
 
     :param synthio.ReadableBuffer wave_table: The synthio waveform object of type 'h'
     (signed 16-bit). No default.
