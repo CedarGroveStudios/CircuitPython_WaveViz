@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2024 JG for Cedar Grove Maker Studios
 # SPDX-License-Identifier: MIT
 
+import time
 import board
 import displayio
 import adafruit_ili9341
@@ -45,14 +46,43 @@ wave = WaveBuilder(
 )
 
 # Display a small version on the bottom layer
-splash.append(
-    WaveViz(wave.wave_table, x=20, y=80, width=25, height=25, back_color=0x0000A0)
-)
+small = WaveViz(wave.wave_table, x=0, y=0, width=40, height=40, back_color=0x0000A0)
+splash.append(small)
 
 # Display a full-sized version on the top layer
-splash.append(
-    WaveViz(wave.wave_table, x=0, y=0, width=300, height=240, back_color=None)
-)
+large = WaveViz(wave.wave_table, x=20, y=20, width=280, height=200, back_color=None)
+splash.append(large)
 
 while True:
-    pass
+    for x in range(large.width):
+        small.x = x - (small.width // 2) + large.x
+        small.y = (
+            (large.height // 2)
+            - int(
+                (
+                    wave.wave_table[int(x * WAVE_TABLE_LENGTH / large.width)]
+                    / large.max_result
+                )
+                * large.height
+                // 2
+            )
+            - (small.width // 2)
+            + large.y
+        )
+        time.sleep(0.010)
+    for x in range(large.width - 1, -1, -1):
+        small.x = x - (small.width // 2) + large.x
+        small.y = (
+            (large.height // 2)
+            - int(
+                (
+                    wave.wave_table[int(x * WAVE_TABLE_LENGTH / large.width)]
+                    / large.max_result
+                )
+                * large.height
+                // 2
+            )
+            - (small.width // 2)
+            + large.y
+        )
+        time.sleep(0.010)
