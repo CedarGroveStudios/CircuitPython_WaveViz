@@ -84,6 +84,21 @@ class WaveViz(displayio.TileGrid):
         # Bitmap becomes a displayio.TileGrid object
         super().__init__(self._bmp, pixel_shader=self._palette, x=self._x, y=self._y)
 
+    @property
+    def max_result(self):
+        """The full-scale value of the plotted image."""
+        return self._max_sample_value
+
+    @property
+    def width(self):
+        """The width of the plotted image in pixels."""
+        return self._width
+
+    @property
+    def height(self):
+        """The height of the plotted image in pixels."""
+        return self._height
+
     def _plot_wave(self):
         """Plot the wave_table as a bitmap. Extract samples from the wave
         table to fill the bitmap object's x-axis. Y-axis scale factor is
@@ -101,10 +116,10 @@ class WaveViz(displayio.TileGrid):
         y_points[-1] = self._wave_table[-1]
 
         # Calculate the y-axis scale factor and adjust y values
-        max_sample_value = max(y_points)
-        scale_y = self._height / max_sample_value / 2
+        self._max_sample_value = max(y_points)
+        self._scale_y = self._height / self._max_sample_value / 2
         for y in range(self._width):
-            y_points[y] = self._y_offset + int(y_points[y] * scale_y)
+            y_points[y] = self._y_offset - int(y_points[y] * self._scale_y)
 
         # Draw the values as an open polygon
         bitmaptools.draw_polygon(
