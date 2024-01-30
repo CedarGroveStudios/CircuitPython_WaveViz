@@ -99,6 +99,21 @@ class WaveViz(displayio.TileGrid):
         """The height of the plotted image in pixels."""
         return self._height
 
+    @property
+    def wave_table(self):
+        """The synthio waveform array object."""
+        return self._wave_table
+
+    @wave_table.setter
+    def wave_table(self, new_wave_table):
+        self._wave_table = new_wave_table
+        # Instantiate the target bitmap
+        self._bmp.fill(0)
+
+        # Plot grid and wave table
+        self._plot_grid()  # Plot the grid
+        self._plot_wave()  # Plot the wave table
+
     def _plot_wave(self):
         """Plot the wave_table as a bitmap. Extract samples from the wave
         table to fill the bitmap object's x-axis. Y-axis scale factor is
@@ -115,9 +130,13 @@ class WaveViz(displayio.TileGrid):
         # Update the final point
         y_points[-1] = self._wave_table[-1]
 
+        # pylint: disable=nested-min-max
         # Calculate the y-axis scale factor and adjust y values
-        self._max_sample_value = max(y_points)
-        self._scale_y = self._height / self._max_sample_value / 2
+        self._max_sample_value = max(max(y_points), abs(min(y_points)))
+        if self._max_sample_value != 0:
+            self._scale_y = self._height / self._max_sample_value / 2
+        else:
+            self._scale_y = 1
         for y in range(self._width):
             y_points[y] = self._y_offset - int(y_points[y] * self._scale_y)
 
