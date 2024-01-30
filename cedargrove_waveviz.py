@@ -30,8 +30,8 @@ import bitmaptools
 class WaveViz(displayio.TileGrid):
     """
     The WaveViz class creates a positionable ``displayio.TileGrid`` object
-    from a ``synthio.ReadableBuffer`` wave table. The class inherits all
-    properties of a ``TileGrid`` object including bitmap, pixel_shader, width,
+    from a ``synthio.ReadableBuffer`` wave table. The class inherits the
+    properties of a ``TileGrid`` object of bitmap, pixel_shader, width,
     height, x, y.
 
     :param synthio.ReadableBuffer wave_table: The synthio waveform object of type 'h'
@@ -43,6 +43,8 @@ class WaveViz(displayio.TileGrid):
     :param integer plot_color: The waveform trace color. Defaults to 0x00FF00 (green).
     :param integer grid_color: The perimeter grid color. Defaults to 0x808080 (gray).
     :param integer back_color: The grid background color. Defaults to None (transparent).
+    :param bool auto_scale: Automatically adjust resultant plot to the wave table's
+    full-scale value. Defaults to True (auto scale enabled).
     """
 
     # pylint: disable=too-many-arguments
@@ -56,6 +58,7 @@ class WaveViz(displayio.TileGrid):
         plot_color=0x00FF00,
         grid_color=0x808080,
         back_color=None,
+        auto_scale=True,
     ):
         """Instantiate the tile generator class."""
         self._wave_table = wave_table
@@ -64,6 +67,9 @@ class WaveViz(displayio.TileGrid):
         self._width = width
         self._height = height
         self._y_offset = self._height // 2
+        self._auto_scale = auto_scale
+        self._max_sample_value = 32767  # Maximum signed 16-bit value
+        self._scale_y = 0  # Define for later use
 
         self._palette = displayio.Palette(3)
         self._palette[1] = plot_color
@@ -79,15 +85,19 @@ class WaveViz(displayio.TileGrid):
         self._bmp.fill(0)
 
         # Plot grid and wave table
-        self._plot_grid()  # Plot the grid
-        self._plot_wave()  # Plot the wave table
+        self._update_plot()
         # Bitmap becomes a displayio.TileGrid object
         super().__init__(self._bmp, pixel_shader=self._palette, x=self._x, y=self._y)
 
     @property
-    def max_result(self):
-        """The full-scale value of the plotted image."""
-        return self._max_sample_value
+    def wave_table(self):
+        """The synthio waveform array object."""
+        return self._wave_table
+
+    @wave_table.setter
+    def wave_table(self, new_wave_table):
+        self._wave_table = new_wave_table
+        self._update_plot()
 
     @property
     def width(self):
@@ -100,14 +110,24 @@ class WaveViz(displayio.TileGrid):
         return self._height
 
     @property
-    def wave_table(self):
-        """The synthio waveform array object."""
-        return self._wave_table
+    def auto_scale(self):
+        """Automatically adjust resultant plot to the wave table's
+        full-scale value."""
+        return self._auto_scale
 
-    @wave_table.setter
-    def wave_table(self, new_wave_table):
-        self._wave_table = new_wave_table
-        # Instantiate the target bitmap
+    @auto_scale.setter
+    def auto_scale(self, new_auto_scale):
+        self._auto_scale = new_auto_scale
+        self._update_plot()
+
+    @property
+    def max_result(self):
+        """The full-scale value of the plotted image."""
+        return self._max_sample_value
+
+    def _update_plot(self):
+        """Clears the bitmap and plots the grid and waveform."""
+        # Clear the target bitmap
         self._bmp.fill(0)
 
         # Plot grid and wave table
@@ -134,7 +154,10 @@ class WaveViz(displayio.TileGrid):
         # Calculate the y-axis scale factor and adjust y values
         self._max_sample_value = max(max(y_points), abs(min(y_points)))
         if self._max_sample_value != 0:
-            self._scale_y = self._height / self._max_sample_value / 2
+            if self._auto_scale:
+                self._scale_y = self._height / self._max_sample_value / 2
+            else:
+                self._scale_y = self._height / 32767 / 2
         else:
             self._scale_y = 1
         for y in range(self._width):
