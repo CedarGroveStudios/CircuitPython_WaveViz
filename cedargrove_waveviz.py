@@ -149,10 +149,10 @@ class WaveViz(displayio.TileGrid):
         on the attack and release time values."""
         # Get the five envelope values from the wave table
         a_time = self._wave_table[0]  # Attack time
-        a_level = self._wave_table[1]  # Attack level
-        d_time = self._wave_table[2]  # Decay time
-        s_level = self._wave_table[3]  # Sustain level
-        r_time = self._wave_table[4]  # Release time
+        a_level = self._wave_table[3]  # Attack level
+        d_time = self._wave_table[1]  # Decay time
+        s_level = self._wave_table[4]  # Sustain level
+        r_time = self._wave_table[2]  # Release time
 
         x_points = array("h", [])
         y_points = array("h", [])

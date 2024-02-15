@@ -68,8 +68,10 @@ Usage Example
 
 .. code-block:: python
 
+
     import board
     import displayio
+    import synthio
     import adafruit_ili9341
     from cedargrove_wavebuilder import WaveBuilder, WaveShape
     from cedargrove_waveviz import WaveViz
@@ -111,18 +113,43 @@ Usage Example
         debug=False,
     )
 
+    # Create a synthio.Envelope object
+    env = synthio.Envelope(
+        attack_time=0.05,
+        attack_level=1.0,
+        decay_time=0.1,
+        release_time=0.1,
+        sustain_level=0.5,
+    )
+
+
     # Display a small version on the bottom layer
     splash.append(
         WaveViz(wave.wave_table, x=20, y=80, width=25, height=25, back_color=0x0000A0)
     )
 
-    # Display a full-sized version on the top layer
+    # Display a full-sized version on the middle layer
     splash.append(
         WaveViz(wave.wave_table, x=0, y=0, width=300, height=240, back_color=None)
     )
 
+    # Display the envelope object on the top layer
+    splash.append(
+        WaveViz(
+            env,
+            x=150,
+            y=170,
+            width=80,
+            height=40,
+            plot_color=0xFFFFFF,
+            back_color=0x800080,
+            envelope_plot=True,
+        )
+    )
+
     while True:
         pass
+
 
 
 
