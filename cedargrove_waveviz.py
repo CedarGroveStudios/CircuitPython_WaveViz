@@ -5,9 +5,10 @@
 `cedargrove_waveviz`
 ===============================================================================
 A CircuitPython class to create a positionable ``displayio.TileGrid`` object
-from a ``synthio.ReadableBuffer`` wave table or ``synthio.Envelope object.
-The class inherits the properties of a ``TileGrid`` object including bitmap,
-pixel_shader, width, height, x, y.
+from a ``synthio.waveform`` wave table or ``synthio.Envelope`` object.
+The class inherits the properties of a ``TileGrid`` object including
+``bitmap``, ``pixel_shader``, ``width``, ``height``, ``x``, ``y``, and
+provides the bitmap properties of ``width``, ``height``.
 
 https://github.com/CedarGroveStudios/CircuitPython_WaveViz
 https://docs.circuitpython.org/en/latest/shared-bindings/displayio/#displayio.TileGrid
@@ -46,7 +47,7 @@ class WaveViz(displayio.TileGrid):
     :param integer back_color: The grid background color. Defaults to None (transparent).
     :param bool auto_scale: Automatically adjust resultant plot to the wave table's
     full-scale value. Defaults to True (auto scale enabled).
-    :param bool envelope_plot: Plot an envelope object. Defaults to False (plot
+    :param bool env_plot: Plot an envelope object. Defaults to False (plot
     a wave object).
     """
 
@@ -62,7 +63,7 @@ class WaveViz(displayio.TileGrid):
         grid_color=0x808080,
         back_color=None,
         auto_scale=True,
-        envelope_plot=False,
+        env_plot=False,
     ):
         """Instantiate the tile generator class."""
         self._wave_table = wave_table
@@ -74,7 +75,7 @@ class WaveViz(displayio.TileGrid):
         self._auto_scale = auto_scale
         self._max_sample_value = 32767  # Maximum signed 16-bit value
         self._scale_y = 0  # Define for later use
-        self._envelope_plot = envelope_plot
+        self._envelope_plot = env_plot
 
         self._palette = displayio.Palette(3)
         self._palette[1] = plot_color
