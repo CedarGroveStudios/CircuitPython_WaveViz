@@ -31,9 +31,9 @@ import bitmaptools
 class WaveViz(displayio.TileGrid):
     """
     The WaveViz class creates a positionable ``displayio.TileGrid`` object
-    from a ``synthio.ReadableBuffer`` wave table or ``synthio.Envelope object.
-    The class inherits the properties of a ``TileGrid`` object of bitmap,
-    pixel_shader, width, height, x, y.
+    from a ``synthio.ReadableBuffer`` wave table or ``synthio.Envelope``
+    object. The class inherits the properties of a ``TileGrid`` object of
+    ``bitmap``, ``pixel_shader``, ``width``, ``height``, ``x``, ``y``.
 
     :param synthio.ReadableBuffer wave_table: The synthio waveform or envelope
     object of type 'h' (signed 16-bit). No default.
