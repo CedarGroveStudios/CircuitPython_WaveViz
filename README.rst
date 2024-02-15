@@ -19,9 +19,9 @@ Introduction
     :alt: Code Style: Black
 
 A CircuitPython class to create a positionable ``displayio.TileGrid`` object
-from a ``synthio.ReadableBuffer`` wave table. The class inherits all
-properties of a ``TileGrid`` object including ``bitmap``, ``pixel_shader``, ``x``, ``y``
-and provides the bitmap properties of ``width``, ``height``.
+from a ``synthio.ReadableBuffer`` wave table or ``synthio.Envelope object.
+The class inherits the properties of a ``TileGrid`` object including ``bitmap``,
+``pixel_shader``, ``width``, ``height``, ``x``, ``y``.
 
 
 Dependencies

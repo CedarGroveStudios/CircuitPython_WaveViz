@@ -5,9 +5,9 @@
 `cedargrove_waveviz`
 ===============================================================================
 A CircuitPython class to create a positionable ``displayio.TileGrid`` object
-from a ``synthio.ReadableBuffer`` wave table. The class inherits all
-properties of a ``TileGrid`` object including bitmap, pixel_shader, width,
-height, x, y.
+from a ``synthio.ReadableBuffer`` wave table or ``synthio.Envelope object.
+The class inherits the properties of a ``TileGrid`` object including bitmap,
+pixel_shader, width, height, x, y.
 
 https://github.com/CedarGroveStudios/CircuitPython_WaveViz
 https://docs.circuitpython.org/en/latest/shared-bindings/displayio/#displayio.TileGrid
@@ -27,15 +27,16 @@ import bitmaptools
 
 
 # pylint: disable=too-few-public-methods
+# pylint: disable=too-many-instance-attributes
 class WaveViz(displayio.TileGrid):
     """
     The WaveViz class creates a positionable ``displayio.TileGrid`` object
-    from a ``synthio.ReadableBuffer`` wave table. The class inherits the
-    properties of a ``TileGrid`` object of bitmap, pixel_shader, width,
-    height, x, y.
+    from a ``synthio.ReadableBuffer`` wave table or ``synthio.Envelope object.
+    The class inherits the properties of a ``TileGrid`` object of bitmap,
+    pixel_shader, width, height, x, y.
 
-    :param synthio.ReadableBuffer wave_table: The synthio waveform object of type 'h'
-    (signed 16-bit). No default.
+    :param synthio.ReadableBuffer wave_table: The synthio waveform or envelope
+    object of type 'h' (signed 16-bit). No default.
     :param int x: The tile grid's x-axis coordinate value. No default.
     :param int y: The tile grid's y-axis coordinate value. No default.
     :param int width: The tile grid's width in pixels. No default.
@@ -45,6 +46,8 @@ class WaveViz(displayio.TileGrid):
     :param integer back_color: The grid background color. Defaults to None (transparent).
     :param bool auto_scale: Automatically adjust resultant plot to the wave table's
     full-scale value. Defaults to True (auto scale enabled).
+    :param bool envelope_plot: Plot an envelope object. Defaults to False (plot
+    a wave object).
     """
 
     # pylint: disable=too-many-arguments
@@ -59,6 +62,7 @@ class WaveViz(displayio.TileGrid):
         grid_color=0x808080,
         back_color=None,
         auto_scale=True,
+        envelope_plot=False,
     ):
         """Instantiate the tile generator class."""
         self._wave_table = wave_table
@@ -70,6 +74,7 @@ class WaveViz(displayio.TileGrid):
         self._auto_scale = auto_scale
         self._max_sample_value = 32767  # Maximum signed 16-bit value
         self._scale_y = 0  # Define for later use
+        self._envelope_plot = envelope_plot
 
         self._palette = displayio.Palette(3)
         self._palette[1] = plot_color
@@ -126,13 +131,66 @@ class WaveViz(displayio.TileGrid):
         return self._max_sample_value
 
     def _update_plot(self):
-        """Clears the bitmap and plots the grid and waveform."""
+        """Clears the bitmap and plots the grid and waveform or envelope."""
         # Clear the target bitmap
         self._bmp.fill(0)
 
         # Plot grid and wave table
         self._plot_grid()  # Plot the grid
-        self._plot_wave()  # Plot the wave table
+        if self._envelope_plot:
+            self._plot_envelope()
+        else:
+            self._plot_wave()  # Plot the wave table
+
+    def _plot_envelope(self):
+        """Plot the wave_table as a bitmap representing an ADSR envelope
+        object. Y-axis is set at 0.0 to 1.0 and will not automatically
+        scale. Sustain duration is plotted as an arbitrary value based
+        on the attack and release time values."""
+        # Get the five envelope values from the wave table
+        a_time = self._wave_table[0]  # Attack time
+        a_level = self._wave_table[1]  # Attack level
+        d_time = self._wave_table[2]  # Decay time
+        s_level = self._wave_table[3]  # Sustain level
+        r_time = self._wave_table[4]  # Release time
+
+        x_points = array("h", [])
+        y_points = array("h", [])
+
+        # Plot envelope polygon
+        if s_level != 0:
+            # Full ADSR envelope
+            s_time = 0.3 * (a_time + r_time)  # relative/arbitrary, not actual
+            time_points = [
+                0,
+                a_time,
+                a_time + d_time,
+                a_time + d_time + s_time,
+                a_time + d_time + s_time + r_time,
+            ]
+            level_points = [0, a_level, s_level, s_level, 0]
+            env_duration = a_time + d_time + s_time + r_time + 0.0001
+        else:
+            # AR phases only (plucked or struck instrument)
+            time_points = [0, a_time, a_time + r_time]
+            level_points = [0, a_level, 0]
+            env_duration = a_time + r_time + 0.0001
+
+        # Scale the lists to fit the plot window size and location in pixels
+        for time in time_points:
+            x_points.append(int((self._width / env_duration) * time))
+
+        for level in level_points:
+            y_points.append(-int(self._height * level) + self._height)
+
+        # Draw the envelope polygon
+        bitmaptools.draw_polygon(
+            self._bmp,
+            x_points,
+            y_points,
+            1,
+            False,
+        )
 
     def _plot_wave(self):
         """Plot the wave_table as a bitmap. Extract samples from the wave
@@ -182,12 +240,13 @@ class WaveViz(displayio.TileGrid):
             2,
         )
 
-        # Draw x-axis line
-        bitmaptools.draw_line(
-            self._bmp,
-            0,
-            self._y_offset,
-            self._width,
-            self._y_offset,
-            2,
-        )
+        if not self._envelope_plot:
+            # Draw x-axis line for wave plot
+            bitmaptools.draw_line(
+                self._bmp,
+                0,
+                self._y_offset,
+                self._width,
+                self._y_offset,
+                2,
+            )
