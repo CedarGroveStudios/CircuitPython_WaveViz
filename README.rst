@@ -143,7 +143,6 @@ Usage Example
             height=40,
             plot_color=0xFFFFFF,
             back_color=0x800080,
-            envelope_plot=True,
         )
     )
 
