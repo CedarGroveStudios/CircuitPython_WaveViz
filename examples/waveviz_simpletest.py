@@ -75,7 +75,6 @@ splash.append(
         height=40,
         plot_color=0xFFFFFF,
         back_color=0x800080,
-        env_plot=True,
     )
 )
 

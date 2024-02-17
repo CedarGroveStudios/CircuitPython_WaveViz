@@ -24,6 +24,7 @@ Implementation Notes
 
 from array import array
 import displayio
+import synthio
 import bitmaptools
 
 
@@ -36,8 +37,9 @@ class WaveViz(displayio.TileGrid):
     object. The class inherits the properties of a ``TileGrid`` object of
     ``bitmap``, ``pixel_shader``, ``width``, ``height``, ``x``, ``y``.
 
-    :param synthio.ReadableBuffer wave_table: The synthio waveform or envelope
-    object of type 'h' (signed 16-bit). No default.
+    :param union(synthio.ReadableBuffer, synthio.Envelope) wave_table: The
+    synthio waveform or envelope object. Wave table of type 'h' (signed
+    16-bit) or envelope object of type `synthio.Envelope`. No default.
     :param int x: The tile grid's x-axis coordinate value. No default.
     :param int y: The tile grid's y-axis coordinate value. No default.
     :param int width: The tile grid's width in pixels. No default.
@@ -47,8 +49,6 @@ class WaveViz(displayio.TileGrid):
     :param integer back_color: The grid background color. Defaults to None (transparent).
     :param bool auto_scale: Automatically adjust resultant plot to the wave table's
     full-scale value. Defaults to True (auto scale enabled).
-    :param bool env_plot: Plot an envelope object. Defaults to False (plot
-    a wave object).
     """
 
     # pylint: disable=too-many-arguments
@@ -63,7 +63,6 @@ class WaveViz(displayio.TileGrid):
         grid_color=0x808080,
         back_color=None,
         auto_scale=True,
-        env_plot=False,
     ):
         """Instantiate the tile generator class."""
         self._wave_table = wave_table
@@ -75,7 +74,11 @@ class WaveViz(displayio.TileGrid):
         self._auto_scale = auto_scale
         self._max_sample_value = 32767  # Maximum signed 16-bit value
         self._scale_y = 0  # Define for later use
-        self._envelope_plot = env_plot
+
+        if isinstance(self._wave_table, synthio.Envelope):
+            self._envelope_plot = True
+        else:
+            self._envelope_plot = False
 
         self._palette = displayio.Palette(3)
         self._palette[1] = plot_color
@@ -103,6 +106,10 @@ class WaveViz(displayio.TileGrid):
     @wave_table.setter
     def wave_table(self, new_wave_table):
         self._wave_table = new_wave_table
+        if isinstance(self._wave_table, synthio.Envelope):
+            self._envelope_plot = True
+        else:
+            self._envelope_plot = False
         self._update_plot()
 
     @property
